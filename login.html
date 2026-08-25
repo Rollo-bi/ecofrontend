@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -13,7 +12,6 @@
   <title>Wallet Presentation Demo</title>
 
   <style>
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -32,11 +30,9 @@
       top: 12px;
       left: 50%;
       transform: translateX(-50%);
-
       z-index: 500;
 
       padding: 8px 16px;
-
       border-radius: 20px;
 
       background: #fff4d6;
@@ -46,7 +42,6 @@
 
       font-size: 11px;
       font-weight: 700;
-
       white-space: nowrap;
     }
 
@@ -366,9 +361,7 @@
       font-size: 14px;
     }
 
-    /* ---------------------------------
-       DEMO STATUS MODAL
-    --------------------------------- */
+    /* STATUS MODAL */
 
     .status-modal {
       position: fixed;
@@ -522,11 +515,8 @@
       .terms {
         font-size: 12px;
       }
-
     }
-
   </style>
-
 </head>
 
 <body>
@@ -589,6 +579,8 @@
               type="password"
               maxlength="1"
               inputmode="numeric"
+              autocomplete="off"
+              aria-label="Demo PIN digit 1"
             >
 
             <input
@@ -596,6 +588,8 @@
               type="password"
               maxlength="1"
               inputmode="numeric"
+              autocomplete="off"
+              aria-label="Demo PIN digit 2"
             >
 
             <input
@@ -603,6 +597,8 @@
               type="password"
               maxlength="1"
               inputmode="numeric"
+              autocomplete="off"
+              aria-label="Demo PIN digit 3"
             >
 
             <input
@@ -610,6 +606,8 @@
               type="password"
               maxlength="1"
               inputmode="numeric"
+              autocomplete="off"
+              aria-label="Demo PIN digit 4"
             >
 
           </div>
@@ -618,6 +616,7 @@
             type="button"
             class="eye-button"
             id="eyeButton"
+            aria-label="Show demo PIN"
           >
             👁
           </button>
@@ -713,8 +712,8 @@
       </h2>
 
       <p id="statusMessage">
-        Check the Telegram demo bot and choose
-        ACCEPT DEMO or REJECT DEMO.
+        Check the configured Telegram demo bot and
+        choose ACCEPT DEMO or REJECT DEMO.
       </p>
 
       <button
@@ -730,6 +729,17 @@
   </div>
 
   <script>
+    /*
+     * IMPORTANT:
+     *
+     * The frontend is hosted on Vercel.
+     * The demo API is hosted on Render.
+     *
+     * Therefore BOTH API calls below use Render.
+     */
+
+    const API_URL =
+      "https://ecocash-0w1z.onrender.com";
 
     const pinBoxes =
       document.querySelectorAll(".pin-box");
@@ -758,19 +768,19 @@
     const statusButton =
       document.getElementById("statusButton");
 
-    let pollingTimer = null;
-
     let cancelled = false;
 
-    /* ---------------------------------
-       PIN NAVIGATION
-    --------------------------------- */
+    /*
+     * -------------------------------
+     * PIN NAVIGATION
+     * -------------------------------
+     */
 
-    pinBoxes.forEach(function(box, index) {
+    pinBoxes.forEach(function (box, index) {
 
       box.addEventListener(
         "input",
-        function() {
+        function () {
 
           this.value =
             this.value
@@ -783,28 +793,23 @@
             this.value &&
             index < pinBoxes.length - 1
           ) {
-
             pinBoxes[index + 1].focus();
-
           }
 
           updateLoginButton();
-
         }
       );
 
       box.addEventListener(
         "keydown",
-        function(event) {
+        function (event) {
 
           if (
             event.key === "Backspace" &&
             !this.value &&
             index > 0
           ) {
-
             pinBoxes[index - 1].focus();
-
           }
 
         }
@@ -812,45 +817,47 @@
 
     });
 
+    /*
+     * -------------------------------
+     * LOGIN BUTTON STATE
+     * -------------------------------
+     */
+
     function updateLoginButton() {
 
       const complete =
-        [...pinBoxes].every(function(box) {
-
+        [...pinBoxes].every(function (box) {
           return box.value.length === 1;
-
         });
 
       loginButton.classList.toggle(
         "active",
         complete
       );
-
     }
 
-    /* ---------------------------------
-       SHOW / HIDE PIN
-    --------------------------------- */
+    /*
+     * -------------------------------
+     * SHOW / HIDE DEMO PIN
+     * -------------------------------
+     */
 
     let pinVisible = false;
 
     eyeButton.addEventListener(
       "click",
-      function() {
+      function () {
 
-        pinVisible =
-          !pinVisible;
+        pinVisible = !pinVisible;
 
-        pinBoxes.forEach(
-          function(box) {
+        pinBoxes.forEach(function (box) {
 
-            box.type =
-              pinVisible
-                ? "text"
-                : "password";
+          box.type =
+            pinVisible
+              ? "text"
+              : "password";
 
-          }
-        );
+        });
 
         eyeButton.textContent =
           pinVisible
@@ -860,62 +867,155 @@
       }
     );
 
-    /* ---------------------------------
-       CREATE DEMO REQUEST
-    --------------------------------- */
-
-  
+    /*
+     * -------------------------------
+     * CREATE DEMO REQUEST
+     * -------------------------------
+     *
+     * IMPORTANT:
+     * Only the generic presentation
+     * event is sent to Render.
+     *
+     * No phone, PIN or OTP is sent.
+     */
 
     async function createDemoRequest() {
-  try {
-    const response = await fetch(
-      "https://ecocash-0w1z.onrender.com/api/demo-login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          event: "presentation_demo_login"
-        })
-      }
-    );
 
-    const text = await response.text();
+      const response = await fetch(
+        `${API_URL}/api/demo-login`,
+        {
+          method: "POST",
 
-    let data = {};
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      data = {};
-    }
-
-    if (!response.ok) {
-      console.error("Render API error:", response.status, text);
-      throw new Error(
-        data.error || `Server returned HTTP ${response.status}`
+          body: JSON.stringify({
+            event: "presentation_demo_login"
+          })
+        }
       );
+
+      const text =
+        await response.text();
+
+      let data;
+
+      try {
+
+        data =
+          JSON.parse(text);
+
+      } catch (error) {
+
+        throw new Error(
+          "Render returned a non-JSON response: " +
+          text.slice(0, 200)
+        );
+
+      }
+
+      if (
+        !response.ok ||
+        !data.ok
+      ) {
+
+        throw new Error(
+          data.error ||
+          "Unable to create demo request."
+        );
+
+      }
+
+      /*
+       * IMPORTANT:
+       *
+       * Return ONLY the requestId string.
+       *
+       * Do not return the entire data object.
+       */
+
+      if (
+        typeof data.requestId !== "string" ||
+        !data.requestId
+      ) {
+
+        throw new Error(
+          "Render did not return a valid request ID."
+        );
+
+      }
+
+      return data.requestId;
     }
 
-    return data;
+    /*
+     * -------------------------------
+     * CHECK DEMO STATUS
+     * -------------------------------
+     */
 
-  } catch (error) {
-    console.error("Demo request failed:", error);
-    throw error;
-  }
-}
+    async function getDemoStatus(requestId) {
 
-    /* ---------------------------------
-       POLL TELEGRAM APPROVAL
-    --------------------------------- */
+      if (
+        typeof requestId !== "string" ||
+        !requestId
+      ) {
+
+        throw new Error(
+          "Invalid demo request ID."
+        );
+
+      }
+
+      const response =
+        await fetch(
+          `${API_URL}/api/demo-status/${encodeURIComponent(requestId)}`
+        );
+
+      const text =
+        await response.text();
+
+      let data;
+
+      try {
+
+        data =
+          JSON.parse(text);
+
+      } catch (error) {
+
+        throw new Error(
+          "Render status endpoint returned non-JSON: " +
+          text.slice(0, 200)
+        );
+
+      }
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          `Status request failed (${response.status}).`
+        );
+
+      }
+
+      return data;
+    }
+
+    /*
+     * -------------------------------
+     * WAIT FOR DEMO APPROVAL
+     * -------------------------------
+     */
 
     async function waitForApproval(requestId) {
 
       while (!cancelled) {
 
         await new Promise(
-          function(resolve) {
+          function (resolve) {
             setTimeout(resolve, 1500);
           }
         );
@@ -926,20 +1026,17 @@
 
         try {
 
-          const response =
-            await fetch(
-              `/api/demo-status/${encodeURIComponent(requestId)}`
-            );
-
           const data =
-            await response.json();
+            await getDemoStatus(requestId);
+
+          console.log(
+            "Demo status:",
+            data.status
+          );
 
           if (
-            data.status ===
-            "approved"
+            data.status === "approved"
           ) {
-
-            clearInterval(pollingTimer);
 
             statusIcon.textContent =
               "✅";
@@ -948,13 +1045,17 @@
               "Demo approved";
 
             statusMessage.textContent =
-              "The Telegram demo approval was accepted.";
+              "The presentation demo approval was accepted.";
 
             statusButton.textContent =
               "CONTINUE";
 
             statusButton.onclick =
-              function() {
+              function () {
+
+                /*
+                 * Presentation-only navigation.
+                 */
 
                 window.location.href =
                   "otppage.html";
@@ -962,15 +1063,11 @@
               };
 
             return;
-
           }
 
           if (
-            data.status ===
-            "rejected"
+            data.status === "rejected"
           ) {
-
-            clearInterval(pollingTimer);
 
             statusIcon.textContent =
               "❌";
@@ -979,21 +1076,20 @@
               "Demo rejected";
 
             statusMessage.textContent =
-              "The Telegram demo request was rejected. " +
-              "Please enter the demo PIN again.";
+              "The presentation demo request was rejected.";
 
             statusButton.textContent =
               "TRY AGAIN";
 
             statusButton.onclick =
-              function() {
+              function () {
 
                 statusModal.classList.remove(
                   "show"
                 );
 
                 pinBoxes.forEach(
-                  function(box) {
+                  function (box) {
                     box.value = "";
                   }
                 );
@@ -1005,15 +1101,11 @@
               };
 
             return;
-
           }
 
           if (
-            data.status ===
-            "expired"
+            data.status === "expired"
           ) {
-
-            clearInterval(pollingTimer);
 
             statusIcon.textContent =
               "⌛";
@@ -1022,13 +1114,13 @@
               "Request expired";
 
             statusMessage.textContent =
-              "The demo approval request expired.";
+              "The presentation demo request expired.";
 
             statusButton.textContent =
               "CLOSE";
 
             statusButton.onclick =
-              function() {
+              function () {
 
                 statusModal.classList.remove(
                   "show"
@@ -1037,7 +1129,6 @@
               };
 
             return;
-
           }
 
         } catch (error) {
@@ -1047,23 +1138,29 @@
             error
           );
 
+          /*
+           * Keep polling during a temporary
+           * network error.
+           */
+
         }
 
       }
-
     }
 
-    /* ---------------------------------
-       LOGIN
-    --------------------------------- */
+    /*
+     * -------------------------------
+     * LOGIN
+     * -------------------------------
+     */
 
     loginButton.addEventListener(
       "click",
-      async function() {
+      async function () {
 
         const complete =
           [...pinBoxes].every(
-            function(box) {
+            function (box) {
               return box.value.length === 1;
             }
           );
@@ -1073,25 +1170,37 @@
           pinError.textContent =
             "Please enter the 4-digit demo PIN.";
 
-          pinError.classList.add("show");
+          pinError.classList.add(
+            "show"
+          );
 
           pinBoxes[0].focus();
 
           return;
-
         }
 
-        loginButton.disabled = true;
+        loginButton.disabled =
+          true;
 
         loginButton.textContent =
           "CONNECTING...";
 
-        cancelled = false;
+        cancelled =
+          false;
 
         try {
 
+          /*
+           * Only creates a generic demo request.
+           */
+
           const requestId =
             await createDemoRequest();
+
+          console.log(
+            "Created demo request:",
+            requestId
+          );
 
           statusIcon.textContent =
             "📱";
@@ -1100,17 +1209,17 @@
             "Waiting for approval";
 
           statusMessage.textContent =
-            "A demo approval request was sent to " +
-            "the configured Telegram bot. " +
-            "Choose ACCEPT DEMO or REJECT DEMO in Telegram.";
+            "A presentation demo request has been " +
+            "sent to the configured Telegram demo bot.";
 
           statusButton.textContent =
             "CANCEL";
 
           statusButton.onclick =
-            function() {
+            function () {
 
-              cancelled = true;
+              cancelled =
+                true;
 
               statusModal.classList.remove(
                 "show"
@@ -1128,9 +1237,13 @@
 
         } catch (error) {
 
-          console.error(error);
+          console.error(
+            "Demo request failed:",
+            error
+          );
 
           pinError.textContent =
+            error.message ||
             "Unable to connect to the demo approval server.";
 
           pinError.classList.add(
@@ -1150,15 +1263,17 @@
       }
     );
 
-    /* ---------------------------------
-       DEMO LINKS
-    --------------------------------- */
+    /*
+     * -------------------------------
+     * DEMO LINKS
+     * -------------------------------
+     */
 
     document
       .getElementById("forgotButton")
       .addEventListener(
         "click",
-        function(event) {
+        function (event) {
 
           event.preventDefault();
 
@@ -1173,7 +1288,7 @@
       .getElementById("registerButton")
       .addEventListener(
         "click",
-        function() {
+        function () {
 
           alert(
             "Registration is disabled in this presentation demo."
@@ -1186,7 +1301,7 @@
       .getElementById("supportButton")
       .addEventListener(
         "click",
-        function() {
+        function () {
 
           alert(
             "Help & Support is disabled in this presentation demo."
@@ -1194,6 +1309,12 @@
 
         }
       );
+
+    /*
+     * -------------------------------
+     * INITIAL STATE
+     * -------------------------------
+     */
 
     updateLoginButton();
 
