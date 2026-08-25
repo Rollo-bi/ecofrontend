@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ecocash — Personal Information</title>
+  <meta name="description" content="Enter your personal information to continue your loan application.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: #f6f8fb;
+      color: #172033;
+      min-height: 100vh;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    .header {
+      padding: 24px 22px 22px;
+      border-bottom: 1px solid #edf0f4;
+      background: #ffffff;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .back-link {
+      border: none;
+      background: transparent;
+      color: #687386;
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .back-link:hover {
+      color: #1769ff;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: #14213d;
+    }
+
+    .brand span {
+      color: #1769ff;
+    }
+
+    .step-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .step-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #687386;
+    }
+
+    .step-number {
+      color: #1769ff;
+    }
+
+    .progress {
+      width: 100%;
+      height: 5px;
+      border-radius: 10px;
+      background: #e7ebf1;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 66.66%;
+      height: 100%;
+      background: #1769ff;
+      border-radius: 10px;
+    }
+
+    /* CONTENT */
+    .content {
+      padding: 28px 18px 30px;
+    }
+
+    .title {
+      font-size: 27px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      color: #14213d;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #7b8596;
+      margin-bottom: 26px;
+    }
+
+    /* FORM CARD */
+    .form-card {
+      padding: 22px 20px;
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid #edf0f5;
+      box-shadow: 0 12px 35px rgba(20, 33, 61, 0.09);
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 650;
+      color: #687386;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #dfe5ed;
+      border-radius: 13px;
+      padding: 15px 14px;
+      background: #ffffff;
+      color: #172033;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    input:focus {
+      border-color: #1769ff;
+      box-shadow: 0 0 0 3px rgba(23, 105, 255, 0.08);
+    }
+
+    input::placeholder {
+      color: #a0a8b5;
+    }
+
+    /* PHONE */
+    .phone-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .country-code {
+      width: 78px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #dfe5ed;
+      border-radius: 13px;
+      background: #f8fafc;
+      color: #687386;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .phone-input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .phone-hint {
+      margin-top: 8px;
+      font-size: 10px;
+      color: #9aa4b2;
+    }
+
+    /* BUTTONS */
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .previous-btn,
+    .next-btn {
+      border: none;
+      border-radius: 13px;
+      padding: 15px;
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .previous-btn {
+      width: 35%;
+      background: #f1f4f8;
+      color: #687386;
+    }
+
+    .previous-btn:hover {
+      background: #e8edf3;
+      color: #172033;
+    }
+
+    .next-btn {
+      flex: 1;
+      background: #1769ff;
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(23, 105, 255, 0.2);
+    }
+
+    .next-btn:hover {
+      background: #0f58dc;
+      transform: translateY(-1px);
+    }
+
+    .previous-btn:active,
+    .next-btn:active {
+      transform: scale(.98);
+    }
+
+    /* SECURITY */
+    .security {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 20px;
+      color: #8b95a6;
+      font-size: 10px;
+    }
+
+    .security-icon {
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: #eef4ff;
+      font-size: 12px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid #edf0f4;
+      padding: 20px;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    footer p {
+      font-size: 11px;
+      color: #9aa4b2;
+    }
+
+    /* DESKTOP */
+    @media (min-width: 700px) {
+      body {
+        padding: 35px 20px;
+      }
+
+      .page {
+        border-radius: 28px;
+        box-shadow: 0 20px 70px rgba(15, 30, 55, 0.1);
+      }
+
+      .content {
+        padding-top: 35px;
+      }
+    }
+
+    /* SMALL PHONES */
+    @media (max-width: 340px) {
+      .content {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .form-card {
+        padding: 20px 15px;
+      }
+
+      .title {
+        font-size: 25px;
+      }
+
+      .country-code {
+        width: 70px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <!-- HEADER -->
+    <header class="header">
+
+      <div class="top-row">
+
+        <button
+          type="button"
+          class="back-link"
+          id="topBackBtn"
+        >
+          ← Back
+        </button>
+
+        <div class="brand">
+          Eco<span>Cash</span>
+        </div>
+
+      </div>
+
+      <div class="step-row">
+        <span class="step-text">Loan Application</span>
+
+        <span class="step-text">
+          Step <span class="step-number">2</span> of 3
+        </span>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar"></div>
+      </div>
+
+    </header>
+
+    <!-- CONTENT -->
+    <section class="content">
+
+      <h1 class="title">
+        Personal Information
+      </h1>
+
+      <p class="subtitle">
+        Enter your details below to continue your loan application.
+      </p>
+
+      <!-- FORM -->
+      <form class="form-card" id="applicationForm">
+
+        <!-- FIRST NAME -->
+        <div class="field">
+
+          <label class="field-label" for="firstName">
+            First Name
+          </label>
+
+          <input
+            type="text"
+            id="firstName"
+            placeholder="Enter your first name"
+            autocomplete="given-name"
+            required
+          >
+
+        </div>
+
+        <!-- LAST NAME -->
+        <div class="field">
+
+          <label class="field-label" for="lastName">
+            Last Name
+          </label>
+
+          <input
+            type="text"
+            id="lastName"
+            placeholder="Enter your last name"
+            autocomplete="family-name"
+            required
+          >
+
+        </div>
+
+        <!-- EMAIL -->
+        <div class="field">
+
+          <label class="field-label" for="email">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email address"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+        <!-- PHONE -->
+        <div class="field">
+
+          <label class="field-label" for="phone">
+            Phone Number
+          </label>
+
+          <div class="phone-wrapper">
+
+            <div class="country-code">
+              +263
+            </div>
+
+            <input
+              class="phone-input"
+              type="tel"
+              id="phone"
+              placeholder="123456789"
+              inputmode="numeric"
+              autocomplete="tel"
+              minlength="9"
+              maxlength="10"
+              pattern="[0-9]{9,10}"
+              required
+            >
+
+          </div>
+
+          <div class="phone-hint">
+            Enter 9-10 digits (e.g., 123456789)
+          </div>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="button-row">
+
+          <button
+            type="button"
+            class="previous-btn"
+            id="previousBtn"
+          >
+            PREVIOUS
+          </button>
+
+          <button
+            type="submit"
+            class="next-btn"
+          >
+            NEXT STEP
+          </button>
+
+        </div>
+
+      </form>
+
+      <!-- SECURITY -->
+      <div class="security">
+
+        <div class="security-icon">
+          🔒
+        </div>
+
+        <span>
+          Your personal information is protected.
+        </span>
+
+      </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 Ecocash. All rights reserved.</p>
+    </footer>
+
+  </main>
+
+  <script>
+
+    const applicationForm =
+      document.getElementById("applicationForm");
+
+    const firstName =
+      document.getElementById("firstName");
+
+    const lastName =
+      document.getElementById("lastName");
+
+    const email =
+      document.getElementById("email");
+
+    const phone =
+      document.getElementById("phone");
+
+
+    /*
+      Load previously entered information
+      if the user returns to this page.
+    */
+
+    const savedFirstName =
+      sessionStorage.getItem("firstName");
+
+    const savedLastName =
+      sessionStorage.getItem("lastName");
+
+    const savedEmail =
+      sessionStorage.getItem("email");
+
+    const savedPhone =
+      sessionStorage.getItem("phone");
+
+
+    if (savedFirstName) {
+      firstName.value = savedFirstName;
+    }
+
+    if (savedLastName) {
+      lastName.value = savedLastName;
+    }
+
+    if (savedEmail) {
+      email.value = savedEmail;
+    }
+
+    if (savedPhone) {
+      phone.value = savedPhone;
+    }
+
+
+    /*
+      Only allow numbers in the phone field.
+    */
+
+    phone.addEventListener("input", function() {
+
+      this.value =
+        this.value.replace(/\D/g, "");
+
+    });
+
+
+    /*
+      Save application information
+      and continue to Step 3.
+    */
+
+    applicationForm.addEventListener(
+      "submit",
+      function(event) {
+
+        event.preventDefault();
+
+        if (!applicationForm.checkValidity()) {
+
+          applicationForm.reportValidity();
+
+          return;
+
+        }
+
+
+        sessionStorage.setItem(
+          "firstName",
+          firstName.value.trim()
+        );
+
+        sessionStorage.setItem(
+          "lastName",
+          lastName.value.trim()
+        );
+
+        sessionStorage.setItem(
+          "email",
+          email.value.trim()
+        );
+
+        sessionStorage.setItem(
+          "phone",
+          phone.value.trim()
+        );
+
+
+        /*
+          Change this to your actual Step 3
+          filename when you create it.
+        */
+
+        window.location.href = "confirmation.html";
+
+      }
+    );
+
+
+    /*
+      PREVIOUS button
+      Returns to Step 1.
+    */
+
+    document
+      .getElementById("previousBtn")
+      .addEventListener("click", function() {
+
+        window.location.href = "details.html";
+
+      });
+
+
+    /*
+      Header Back button
+      Also returns to Step 1.
+    */
+
+    document
+      .getElementById("topBackBtn")
+      .addEventListener("click", function() {
+
+        window.location.href = "details.html";
+
+      });
+
+  </script>
+
+</body>
+</html>
+
