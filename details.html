@@ -1,16 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Ecocash — Loan Application</title>
-  <meta name="description" content="Complete your loan application.">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>EcoCash — Loan Application</title>
+  <meta name="description" content="Complete your EcoCash loan application.">
 
   <style>
     * {
@@ -20,304 +15,635 @@
     }
 
     body {
-      font-family: "Inter", sans-serif;
-      background: #f6f8fb;
-      color: #172033;
       min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #18233d;
     }
 
+    /* DEMO NOTICE */
+
+    .demo-notice {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+
+      padding: 8px 16px;
+      border-radius: 20px;
+
+      background: #fff4d6;
+      border: 1px solid #efd38b;
+
+      color: #806000;
+
+      font-size: 11px;
+      font-weight: 700;
+
+      white-space: nowrap;
+    }
+
+    /* PAGE */
+
     .page {
-      width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
+      width: min(100%, 1100px);
       min-height: 100vh;
-      background: #ffffff;
+      margin: 0 auto;
+
+      background: #fff;
+
+      border: 1px solid #e2e2e2;
+      border-radius: 25px;
+
       overflow: hidden;
+
+      box-shadow:
+        0 2px 12px rgba(0, 0, 0, .06);
     }
 
     /* HEADER */
+
     .header {
-      padding: 28px 22px 22px;
-      border-bottom: 1px solid #edf0f4;
-      background: #ffffff;
+      position: relative;
+
+      height: 148px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-bottom: 4px solid #0868c9;
+
+      background: #fff;
     }
 
-    .brand {
-      font-size: 20px;
+    .back-button {
+      position: absolute;
+      left: 45px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      border: none;
+      background: transparent;
+
+      color: #17233c;
+
+      font-size: 52px;
+      font-weight: 300;
+
+      line-height: 1;
+
+      cursor: pointer;
+    }
+
+    .logo {
+      font-size: 76px;
       font-weight: 800;
-      color: #14213d;
-      margin-bottom: 22px;
+
+      letter-spacing: -5px;
     }
 
-    .brand span {
-      color: #1769ff;
+    .logo-blue {
+      color: #1761c4;
+    }
+
+    .logo-red {
+      color: #df3028;
+    }
+
+    /* CONTENT */
+
+    .content {
+      width: min(720px, calc(100% - 40px));
+
+      margin: 0 auto;
+
+      padding: 45px 0 75px;
+    }
+
+    .step-container {
+      margin-bottom: 35px;
     }
 
     .step-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       margin-bottom: 10px;
     }
 
-    .step-text {
-      font-size: 12px;
-      font-weight: 700;
-      color: #687386;
+    .step-label {
+      color: #53617d;
+
+      font-size: 17px;
+      font-weight: 600;
     }
 
     .step-number {
-      color: #1769ff;
+      color: #1761c4;
+
+      font-size: 17px;
+      font-weight: 700;
     }
 
     .progress {
       width: 100%;
-      height: 5px;
+      height: 7px;
+
       border-radius: 10px;
-      background: #e7ebf1;
+
+      background: #e5e9ef;
+
       overflow: hidden;
     }
 
     .progress-bar {
       width: 33.33%;
       height: 100%;
-      background: #1769ff;
+
       border-radius: 10px;
+
+      background: #1761c4;
     }
 
-    /* CONTENT */
-    .content {
-      padding: 28px 18px 30px;
-    }
+    /* TITLE */
 
-    .title {
-      font-size: 27px;
-      line-height: 1.2;
-      font-weight: 800;
-      letter-spacing: -0.7px;
-      color: #14213d;
-      margin-bottom: 8px;
+    h1 {
+      color: #111d35;
+
+      font-size: 52px;
+      line-height: 1.15;
+
+      font-weight: 500;
+
+      margin-bottom: 18px;
     }
 
     .subtitle {
-      font-size: 13px;
-      line-height: 1.6;
-      color: #7b8596;
-      margin-bottom: 26px;
+      color: #4a5875;
+
+      font-size: 22px;
+      line-height: 1.55;
+
+      margin-bottom: 38px;
     }
 
     /* FORM CARD */
+
     .form-card {
-      padding: 22px 20px;
-      border-radius: 22px;
-      background: #ffffff;
-      border: 1px solid #edf0f5;
-      box-shadow: 0 12px 35px rgba(20, 33, 61, 0.09);
+      width: 100%;
+
+      padding: 35px 38px;
+
+      border-radius: 20px;
+
+      background: #f8fbff;
+
+      border: 1px solid #e1ebf8;
+
+      box-shadow:
+        0 4px 16px rgba(23, 97, 196, .05);
     }
+
+    /* FIELD */
 
     .field {
-      margin-bottom: 22px;
+      margin-bottom: 28px;
     }
 
-    .field:last-child {
+    .field:last-of-type {
       margin-bottom: 0;
     }
 
     .field-label {
       display: block;
-      font-size: 13px;
-      font-weight: 650;
-      color: #687386;
-      margin-bottom: 10px;
+
+      margin-bottom: 11px;
+
+      color: #303c57;
+
+      font-size: 21px;
+      font-weight: 600;
     }
 
-    /* SELECT */
     select,
     input[type="number"],
     textarea {
       width: 100%;
-      border: 1px solid #dfe5ed;
-      border-radius: 13px;
-      padding: 15px 14px;
-      background: #ffffff;
-      color: #172033;
-      font-family: "Inter", sans-serif;
-      font-size: 14px;
+
+      border: 2px solid #c6c8cf;
+      border-radius: 14px;
+
+      padding: 17px 16px;
+
+      background: #fff;
+
+      color: #17233c;
+
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+
       outline: none;
-      transition: .2s ease;
+
+      transition: .15s ease;
     }
 
     select {
       appearance: none;
       -webkit-appearance: none;
+
       cursor: pointer;
-      padding-right: 42px;
+
+      padding-right: 45px;
 
       background-image:
         linear-gradient(45deg, transparent 50%, #687386 50%),
         linear-gradient(135deg, #687386 50%, transparent 50%);
+
       background-position:
-        calc(100% - 19px) 20px,
-        calc(100% - 14px) 20px;
+        calc(100% - 20px) 24px,
+        calc(100% - 14px) 24px;
+
       background-size:
-        5px 5px,
-        5px 5px;
+        7px 7px,
+        7px 7px;
+
       background-repeat: no-repeat;
     }
 
     select:focus,
     input[type="number"]:focus,
     textarea:focus {
-      border-color: #1769ff;
-      box-shadow: 0 0 0 3px rgba(23, 105, 255, 0.08);
+      border-color: #1761c4;
+
+      box-shadow:
+        0 0 0 3px rgba(23, 97, 196, .12);
     }
 
     input::placeholder,
     textarea::placeholder {
-      color: #a0a8b5;
+      color: #9aa4b2;
     }
 
     textarea {
-      min-height: 105px;
+      min-height: 130px;
+
       resize: vertical;
+
       line-height: 1.5;
     }
 
     /* AMOUNT */
+
     .amount-wrapper {
       position: relative;
     }
 
     .currency {
       position: absolute;
-      left: 14px;
+
+      left: 17px;
       top: 50%;
+
       transform: translateY(-50%);
-      font-size: 14px;
+
+      color: #53617d;
+
+      font-size: 20px;
       font-weight: 700;
-      color: #687386;
+
       pointer-events: none;
     }
 
     .amount-input {
-      padding-left: 34px !important;
+      padding-left: 40px !important;
+
       font-weight: 600;
+    }
+
+    /* LOAN SUMMARY */
+
+    .loan-summary {
+      margin-top: 30px;
+
+      padding: 24px;
+
+      border-radius: 16px;
+
+      background: #edf5ff;
+
+      border: 1px solid #d9e9ff;
+    }
+
+    .summary-title {
+      margin-bottom: 18px;
+
+      color: #172c4a;
+
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 20px;
+
+      padding: 10px 0;
+
+      border-bottom: 1px solid #dbe7f5;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: #64728b;
+
+      font-size: 17px;
+    }
+
+    .summary-value {
+      color: #172c4a;
+
+      font-size: 18px;
+      font-weight: 700;
+
+      text-align: right;
     }
 
     /* BUTTON */
-    .next-btn {
+
+    .next-button {
       width: 100%;
-      margin-top: 24px;
+      height: 82px;
+
+      margin-top: 32px;
+
       border: none;
-      border-radius: 13px;
-      padding: 16px;
-      background: #1769ff;
-      color: #ffffff;
-      font-family: "Inter", sans-serif;
-      font-size: 14px;
-      font-weight: 750;
-      letter-spacing: .2px;
-      cursor: pointer;
-      transition: .2s ease;
-      box-shadow: 0 8px 18px rgba(23, 105, 255, 0.2);
-    }
+      border-radius: 17px;
 
-    .next-btn:hover {
-      background: #0f58dc;
-      transform: translateY(-1px);
-    }
+      background: #1761c4;
 
-    .next-btn:active {
-      transform: scale(.98);
-    }
+      color: #fff;
 
-    /* BACK BUTTON */
-    .back-btn {
-      display: block;
-      width: 100%;
-      margin-top: 12px;
-      padding: 13px;
-      border: none;
-      background: transparent;
-      color: #687386;
-      font-family: "Inter", sans-serif;
-      font-size: 13px;
+      font-family: Arial, Helvetica, sans-serif;
+
+      font-size: 25px;
       font-weight: 600;
+
       cursor: pointer;
+
+      transition: .2s ease;
+
+      box-shadow:
+        0 8px 18px rgba(23, 97, 196, .18);
     }
 
-    .back-btn:hover {
-      color: #1769ff;
+    .next-button:hover {
+      background: #0f55b1;
     }
 
-    /* SECURITY NOTE */
+    .next-button:active {
+      transform: scale(.985);
+    }
+
+    .back-link {
+      display: block;
+
+      width: 100%;
+
+      margin-top: 15px;
+
+      padding: 14px;
+
+      border: none;
+
+      background: transparent;
+
+      color: #53617d;
+
+      font-family: Arial, Helvetica, sans-serif;
+
+      font-size: 19px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      text-align: center;
+    }
+
+    .back-link:hover {
+      color: #1761c4;
+    }
+
+    /* SECURITY */
+
     .security {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      margin-top: 20px;
-      color: #8b95a6;
-      font-size: 10px;
+
+      gap: 12px;
+
+      margin-top: 32px;
+
+      color: #53617d;
+
+      font-size: 17px;
+
+      text-align: center;
     }
 
     .security-icon {
-      width: 25px;
-      height: 25px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
-      background: #eef4ff;
-      font-size: 12px;
+
+      width: 34px;
+      height: 34px;
+
+      border-radius: 9px;
+
+      background: #edf5ff;
+
+      font-size: 17px;
+    }
+
+    /* ERROR */
+
+    .error-message {
+      display: none;
+
+      margin-top: 18px;
+
+      padding: 14px 18px;
+
+      border-radius: 10px;
+
+      background: #fff0f0;
+
+      color: #c5221f;
+
+      font-size: 16px;
+      font-weight: 600;
+
+      text-align: center;
+    }
+
+    .error-message.show {
+      display: block;
     }
 
     /* FOOTER */
-    footer {
-      border-top: 1px solid #edf0f4;
-      padding: 20px;
-      text-align: center;
-      background: #ffffff;
+
+    .secure-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 12px;
+
+      margin-top: 65px;
+
+      color: #53617d;
+
+      font-size: 17px;
     }
 
-    footer p {
-      font-size: 11px;
-      color: #9aa4b2;
+    .lock {
+      font-size: 22px;
     }
 
-    /* DESKTOP */
-    @media (min-width: 700px) {
-      body {
-        padding: 35px 20px;
-      }
+    /* MOBILE */
+
+    @media (max-width: 700px) {
 
       .page {
-        border-radius: 28px;
-        box-shadow: 0 20px 70px rgba(15, 30, 55, 0.1);
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+      }
+
+      .demo-notice {
+        max-width: calc(100% - 20px);
+
+        font-size: 8px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .header {
-        padding-top: 32px;
+        height: 115px;
+      }
+
+      .back-button {
+        left: 20px;
+
+        font-size: 42px;
+      }
+
+      .logo {
+        font-size: 47px;
+
+        letter-spacing: -3px;
       }
 
       .content {
-        padding-top: 35px;
+        width: calc(100% - 32px);
+
+        padding-top: 32px;
+      }
+
+      .step-label,
+      .step-number {
+        font-size: 14px;
+      }
+
+      .progress {
+        height: 6px;
+      }
+
+      h1 {
+        font-size: 39px;
+      }
+
+      .subtitle {
+        font-size: 19px;
+      }
+
+      .form-card {
+        padding: 24px 20px;
+      }
+
+      .field-label {
+        font-size: 18px;
+      }
+
+      select,
+      input[type="number"],
+      textarea {
+        font-size: 17px;
+      }
+
+      .loan-summary {
+        padding: 20px;
+      }
+
+      .summary-label {
+        font-size: 15px;
+      }
+
+      .summary-value {
+        font-size: 16px;
+      }
+
+      .next-button {
+        height: 72px;
+
+        font-size: 21px;
+      }
+
+      .security {
+        font-size: 15px;
+      }
+
+      .secure-footer {
+        margin-top: 45px;
+
+        font-size: 15px;
       }
     }
 
     /* VERY SMALL PHONES */
-    @media (max-width: 340px) {
+
+    @media (max-width: 360px) {
+
       .content {
-        padding-left: 12px;
-        padding-right: 12px;
+        width: calc(100% - 24px);
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .subtitle {
+        font-size: 17px;
       }
 
       .form-card {
         padding: 20px 15px;
       }
 
-      .title {
-        font-size: 25px;
+      .summary-row {
+        gap: 10px;
       }
     }
   </style>
@@ -325,70 +651,143 @@
 
 <body>
 
+  
+
   <main class="page">
 
     <!-- HEADER -->
+
     <header class="header">
 
-      <div class="brand">
-        Eco<span>Cash</span>
-      </div>
+      <button
+        type="button"
+        class="back-button"
+        id="backButton"
+        aria-label="Go back"
+      >
+        ‹
+      </button>
 
-      <div class="step-row">
-        <span class="step-text">Loan Application</span>
-        <span class="step-text">
-          Step <span class="step-number">1</span> of 3
-        </span>
-      </div>
-
-      <div class="progress">
-        <div class="progress-bar"></div>
+      <div class="logo">
+        <span class="logo-blue">Eco</span><span class="logo-red">Cash</span>
       </div>
 
     </header>
 
+
     <!-- CONTENT -->
+
     <section class="content">
 
-      <h1 class="title">Tell us about your loan</h1>
+      <!-- PROGRESS -->
+
+      <div class="step-container">
+
+        <div class="step-row">
+
+          <span class="step-label">
+            Loan Application
+          </span>
+
+          <span class="step-label">
+            Step <span class="step-number">1</span> of 3
+          </span>
+
+        </div>
+
+        <div class="progress">
+
+          <div class="progress-bar"></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- TITLE -->
+
+      <h1>
+        Tell us about your loan
+      </h1>
 
       <p class="subtitle">
-        Choose your loan type and provide a few details to continue your application.
+        Choose your loan type and provide a few details
+        to continue your application.
       </p>
 
+
       <!-- FORM -->
-      <form class="form-card" id="loanForm">
+
+      <form
+        class="form-card"
+        id="loanForm"
+      >
 
         <!-- LOAN TYPE -->
+
         <div class="field">
 
-          <label class="field-label" for="loanType">
+          <label
+            class="field-label"
+            for="loanType"
+          >
             Loan Type
           </label>
 
-          <select id="loanType" required>
-            <option value="" selected disabled>
+          <select
+            id="loanType"
+            required
+          >
+
+            <option
+              value=""
+              selected
+              disabled
+            >
               Select loan type
             </option>
-            <option value="personal">Personal Loan</option>
-            <option value="business">Business Loan</option>
-            <option value="home">Home Loan</option>
-            <option value="car">Car Loan</option>
-            <option value="education">Education Loan</option>
+
+            <option value="personal">
+              Personal Loan
+            </option>
+
+            <option value="business">
+              Business Loan
+            </option>
+
+            <option value="home">
+              Home Loan
+            </option>
+
+            <option value="car">
+              Car Loan
+            </option>
+
+            <option value="education">
+              Education Loan
+            </option>
+
           </select>
 
         </div>
 
+
         <!-- LOAN AMOUNT -->
+
         <div class="field">
 
-          <label class="field-label" for="loanAmount">
-            Loan Amount ($)
+          <label
+            class="field-label"
+            for="loanAmount"
+          >
+            Loan Amount
           </label>
 
           <div class="amount-wrapper">
 
-            <span class="currency">$</span>
+            <span class="currency">
+              $
+            </span>
 
             <input
               class="amount-input"
@@ -405,32 +804,72 @@
 
         </div>
 
+
         <!-- LOAN TERM -->
+
         <div class="field">
 
-          <label class="field-label" for="loanTerm">
+          <label
+            class="field-label"
+            for="loanTerm"
+          >
             Loan Term
           </label>
 
-          <select id="loanTerm" required>
-            <option value="" selected disabled>
+          <select
+            id="loanTerm"
+            required
+          >
+
+            <option
+              value=""
+              selected
+              disabled
+            >
               Select loan term
             </option>
-            <option value="6">6 Months</option>
-            <option value="12">12 Months</option>
-            <option value="18">18 Months</option>
-            <option value="24">24 Months</option>
-            <option value="36">36 Months</option>
-            <option value="48">48 Months</option>
-            <option value="60">60 Months</option>
+
+            <option value="6">
+              6 Months
+            </option>
+
+            <option value="12">
+              12 Months
+            </option>
+
+            <option value="18">
+              18 Months
+            </option>
+
+            <option value="24">
+              24 Months
+            </option>
+
+            <option value="36">
+              36 Months
+            </option>
+
+            <option value="48">
+              48 Months
+            </option>
+
+            <option value="60">
+              60 Months
+            </option>
+
           </select>
 
         </div>
 
+
         <!-- PURPOSE -->
+
         <div class="field">
 
-          <label class="field-label" for="purpose">
+          <label
+            class="field-label"
+            for="purpose"
+          >
             Purpose of Loan
           </label>
 
@@ -442,86 +881,349 @@
 
         </div>
 
-        <button type="submit" class="next-btn">
+
+        <!-- SAVED LOAN SUMMARY -->
+
+        <div class="loan-summary">
+
+          <div class="summary-title">
+            Your Selected Loan
+          </div>
+
+          <div class="summary-row">
+
+            <span class="summary-label">
+              Amount
+            </span>
+
+            <span
+              class="summary-value"
+              id="summaryAmount"
+            >
+              —
+            </span>
+
+          </div>
+
+          <div class="summary-row">
+
+            <span class="summary-label">
+              Term
+            </span>
+
+            <span
+              class="summary-value"
+              id="summaryTerm"
+            >
+              —
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+          class="error-message"
+          id="errorMessage"
+        >
+          Please complete all required fields.
+        </div>
+
+
+        <!-- NEXT -->
+
+        <button
+          type="submit"
+          class="next-button"
+        >
           NEXT STEP
         </button>
 
-        <button type="button" class="back-btn" id="backBtn">
-          ← Back
+
+        <!-- BACK -->
+
+        <button
+          type="button"
+          class="back-link"
+          id="backButtonBottom"
+        >
+          ← Back to Loan Calculator
         </button>
 
       </form>
 
+
       <!-- SECURITY -->
+
       <div class="security">
-        <div class="security-icon">🔒</div>
-        <span>Your application information is protected.</span>
+
+        <div class="security-icon">
+          🔒
+        </div>
+
+        <span>
+          Your application information is protected.
+        </span>
+
+      </div>
+
+
+      <!-- FOOTER -->
+
+      <div class="secure-footer">
+
+        <span class="lock">
+          ♙
+        </span>
+
+        <span>
+          © 2026 EcoCash. All rights reserved.
+        </span>
+
       </div>
 
     </section>
 
-    <!-- FOOTER -->
-    <footer>
-      <p>© 2026 Ecocash. All rights reserved.</p>
-    </footer>
-
   </main>
 
+
   <script>
-    const loanForm = document.getElementById("loanForm");
 
-    const loanType = document.getElementById("loanType");
-    const loanAmount = document.getElementById("loanAmount");
-    const loanTerm = document.getElementById("loanTerm");
-    const purpose = document.getElementById("purpose");
+    /* ==========================================================
+       ELEMENTS
+    ========================================================== */
 
-    /*
-      Load the amount and term selected
-      on the previous index.html page.
-    */
-    const savedAmount = sessionStorage.getItem("loanAmount");
-    const savedTerm = sessionStorage.getItem("loanTerm");
+    const loanForm =
+      document.getElementById("loanForm");
+
+    const loanType =
+      document.getElementById("loanType");
+
+    const loanAmount =
+      document.getElementById("loanAmount");
+
+    const loanTerm =
+      document.getElementById("loanTerm");
+
+    const purpose =
+      document.getElementById("purpose");
+
+    const summaryAmount =
+      document.getElementById("summaryAmount");
+
+    const summaryTerm =
+      document.getElementById("summaryTerm");
+
+    const errorMessage =
+      document.getElementById("errorMessage");
+
+
+    /* ==========================================================
+       LOAD SAVED DATA FROM index.html
+    ========================================================== */
+
+    const savedAmount =
+      sessionStorage.getItem("loanAmount");
+
+    const savedTerm =
+      sessionStorage.getItem("loanTerm");
 
     if (savedAmount) {
-      loanAmount.value = savedAmount;
+
+      loanAmount.value =
+        savedAmount;
+
     }
 
     if (savedTerm) {
-      loanTerm.value = savedTerm;
+
+      loanTerm.value =
+        savedTerm;
+
     }
 
-    /*
-      Save the form details and continue
-      to the next application step.
-    */
-    loanForm.addEventListener("submit", function(event) {
 
-      event.preventDefault();
+    /* ==========================================================
+       FORMAT SAVED DATA
+    ========================================================== */
 
-      if (!loanForm.checkValidity()) {
-        loanForm.reportValidity();
-        return;
+    function updateSummary() {
+
+      const amount =
+        Number(loanAmount.value);
+
+      const term =
+        Number(loanTerm.value);
+
+
+      if (amount) {
+
+        summaryAmount.textContent =
+          "$" + amount.toLocaleString("en-US");
+
+      } else {
+
+        summaryAmount.textContent =
+          "—";
+
       }
 
-      sessionStorage.setItem("loanType", loanType.value);
-      sessionStorage.setItem("loanAmount", loanAmount.value);
-      sessionStorage.setItem("loanTerm", loanTerm.value);
-      sessionStorage.setItem("loanPurpose", purpose.value);
 
-      /*
-        Change this to the filename of your Step 2 page.
-      */
-      window.location.href = "application.html";
-    });
+      if (term) {
 
-    /*
-      Return to the loan calculator.
-    */
-    document.getElementById("backBtn").addEventListener("click", function() {
-      window.location.href = "index.html";
-    });
+        summaryTerm.textContent =
+          term + " Months";
+
+      } else {
+
+        summaryTerm.textContent =
+          "—";
+
+      }
+
+    }
+
+
+    /* ==========================================================
+       UPDATE SUMMARY WHEN VALUES CHANGE
+    ========================================================== */
+
+    loanAmount.addEventListener(
+      "input",
+      updateSummary
+    );
+
+    loanTerm.addEventListener(
+      "change",
+      updateSummary
+    );
+
+
+    /* ==========================================================
+       SAVE APPLICATION
+    ========================================================== */
+
+    loanForm.addEventListener(
+      "submit",
+      function(event) {
+
+        event.preventDefault();
+
+        errorMessage.classList.remove("show");
+
+
+        if (!loanForm.checkValidity()) {
+
+          loanForm.reportValidity();
+
+          errorMessage.textContent =
+            "Please complete all required fields.";
+
+          errorMessage.classList.add("show");
+
+          return;
+
+        }
+
+
+        const amount =
+          Number(loanAmount.value);
+
+        const term =
+          Number(loanTerm.value);
+
+
+        /* Validate amount */
+
+        if (
+          amount < 100 ||
+          amount > 5000
+        ) {
+
+          errorMessage.textContent =
+            "Please enter an amount between $100 and $5,000.";
+
+          errorMessage.classList.add("show");
+
+          loanAmount.focus();
+
+          return;
+
+        }
+
+
+        /* Save values */
+
+        sessionStorage.setItem(
+          "loanType",
+          loanType.value
+        );
+
+        sessionStorage.setItem(
+          "loanAmount",
+          String(amount)
+        );
+
+        sessionStorage.setItem(
+          "loanTerm",
+          String(term)
+        );
+
+        sessionStorage.setItem(
+          "loanPurpose",
+          purpose.value.trim()
+        );
+
+
+        /*
+          Continue to the next application step.
+        */
+
+        window.location.href =
+          "application.html";
+
+      }
+    );
+
+
+    /* ==========================================================
+       BACK BUTTONS
+    ========================================================== */
+
+    function goBack() {
+
+      window.location.href =
+        "index.html";
+
+    }
+
+
+    document
+      .getElementById("backButton")
+      .addEventListener(
+        "click",
+        goBack
+      );
+
+
+    document
+      .getElementById("backButtonBottom")
+      .addEventListener(
+        "click",
+        goBack
+      );
+
+
+    /* ==========================================================
+       INITIAL STATE
+    ========================================================== */
+
+    updateSummary();
+
   </script>
 
 </body>
 </html>
-```

